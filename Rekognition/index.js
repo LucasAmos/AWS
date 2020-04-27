@@ -74,4 +74,32 @@ async function analyseImage(filePath) {
   }
 }
 
-analyseImage("./sossusvlei.JPG");
+async function getImageText(bucket, key) {
+  const params = {
+    Image: {
+      S3Object: {
+        Bucket: bucket,
+        Name: key,
+      },
+    },
+  };
+
+  try {
+    const result = await rekognition.detectText(params).promise();
+    return result;
+  } catch (error) {
+    return error.message;
+  }
+}
+
+async function detectText(fileName) {
+  const res = await uploadFile(fileName, BUCKET);
+  const result = await getImageText(res.Bucket, res.key);
+  await deleteFile(res.Bucket, res.Key);
+
+  result.TextDetections.forEach((element) => {
+    console.log(element.DetectedText);
+  });
+}
+
+detectText("./lesmis.jpg");
