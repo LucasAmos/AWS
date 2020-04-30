@@ -39,8 +39,7 @@ async function getImageLabels(bucket, filename) {
   };
 
   try {
-    const result = await rekognition.detectLabels(params).promise();
-    return result;
+    return rekognition.detectLabels(params).promise();
   } catch (error) {
     throw Error(error.message);
   }
