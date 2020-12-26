@@ -1,0 +1,131 @@
+service: expressAPI
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-west-1
+  userPoolName: 'express-${self:provider.stage}'
+  userPoolClientName: 'express-${self:provider.stage}-client'
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-customer
+    CLIENT_ID:
+      Ref: CognitoUserPoolClient
+    USERPOOL:
+      Ref: CognitoUserPool
+functions:
+  server:
+    handler: index.server
+    description: 'Node server'
+    role: lambdaRole
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+resources:
+  Resources:
+    lambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        RoleName: ServerlessApiRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: NodeServerPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
+                - Effect: Allow
+                  Action:
+                    [
+                      'dynamodb:Query',
+                      'dynamodb:Scan',
+                      'dynamodb:GetItem',
+                      'dynamodb:PutItem',
+                      'dynamodb:UpdateItem',
+                      'dynamodb:DeleteItem',
+                    ]
+                  Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}'
+    customersTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    CognitoUserPool:
+      Type: 'AWS::Cognito::UserPool'
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: ${self:provider.userPoolName}
+        UsernameAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: False
+            RequireSymbols: False
+            RequireUppercase: False
+    CognitoUserPoolClient:
+      Type: 'AWS::Cognito::UserPoolClient'
+      Properties:
+        ExplicitAuthFlows:
+          - ALLOW_ADMIN_USER_PASSWORD_AUTH
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        ClientName: ${self:provider.userPoolClientName}
+        GenerateSecret: False
+        UserPoolId:
+          Ref: CognitoUserPool
+    CognitoUserPoolGroupAdmin:
+      Type: 'AWS::Cognito::UserPoolGroup'
+      Properties:
+        Description: Admin group
+        GroupName: admin
+        Precedence: 1
+        UserPoolId:
+          Ref: CognitoUserPool
+    CognitoUserPoolGroupUser:
+      Type: 'AWS::Cognito::UserPoolGroup'
+      Properties:
+        Description: User group
+        GroupName: user
+        Precedence: 2
+        UserPoolId:
+          Ref: CognitoUserPool
+
+  Outputs:
+    CognitoUserPoolArn:
+      Value:
+        Fn::GetAtt:
+          - CognitoUserPool
+          - Arn
+      Export:
+        Name: CognitoUserPoolArn-${self:provider.stage}
+    CognitoUserPoolClient:
+      Value:
+        Ref: CognitoUserPoolClient
+      Export:
+        Name: CognitoUserPoolClient-${self:provider.stage}
