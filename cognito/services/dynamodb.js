@@ -10,7 +10,14 @@ class DynamoDB {
   async getCustomers() {
     const params = {
       TableName: CUSTOMERS_TABLE,
-      Key: { name: 'customer1' },
+    };
+    return this.db.scan(params).promise();
+  }
+
+  async getCustomer(name) {
+    const params = {
+      TableName: CUSTOMERS_TABLE,
+      Key: { name },
     };
     return this.db.get(params).promise();
   }

@@ -3,4 +3,4 @@ const AWS = require('aws-sdk');
 
 const { REGION } = require('../vars');
 
-exports.cognito = new AWS.CognitoIdentityServiceProvider({ region: REGION });
+module.exports = new AWS.CognitoIdentityServiceProvider({ region: REGION });
