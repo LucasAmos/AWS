@@ -12,8 +12,9 @@ const auth = async (req, res, next) => {
   try {
     const { idtoken } = req.headers;
     if (!idtoken) {
-      res.status(403).send('Forbidden');
-      next();
+      const err = new Error();
+      err.code = 'permission_denied';
+      next(err);
     } else {
       const token = await cognitoExpress.validate(idtoken);
       const { username } = token;
@@ -26,7 +27,7 @@ const auth = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(403).json(error);
+    next(error);
   }
 };
 

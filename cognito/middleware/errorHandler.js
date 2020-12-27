@@ -1,33 +1,13 @@
-// Handle not found errors
-const notFound = (req, res, next) => {
-  res
-    .status(404)
-    .json({
-      success: false,
-      message: 'Requested Resource Not Found (404)',
-    })
-    .end();
-};
-
-// Handle internal server errors
-const internalServerError = (err, req, res, next) => {
-  res
-    .status(err.status || 500)
-    .json({
-      message: err.message,
-      errors: err,
-    })
-    .end();
-};
-
-const forbidden = (err, req, res, next) => {
+const error = (err, req, res, next) => {
   if (err.code === 'permission_denied') {
     res.status(403).send('Forbidden');
   }
+
+  if (err.code === 'not_found') {
+    res.status(404).send('Requested Resource Not Found (404)');
+  }
+
+  res.status(err.status || 500).send(err.message);
 };
 
-module.exports = {
-  notFound,
-  internalServerError,
-  forbidden,
-};
+module.exports = error;

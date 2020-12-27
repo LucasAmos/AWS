@@ -8,12 +8,12 @@ const db = new DynamoDB();
 // All endpoints are prepended with /customers
 router.use('/', auth);
 
-router.get('/', guard.check('admin'), async (req, res) => {
+router.get('/', guard.check('admin'), async (req, res, next) => {
   try {
     const result = await db.getCustomers();
     res.json(result);
   } catch (error) {
-    res.status(500).json(error.message);
+    next(error);
   }
 });
 
@@ -27,7 +27,7 @@ router.get('/:name', guard.check('admin'), async (req, res) => {
       res.json(result);
     }
   } catch (error) {
-    res.status(500).json(error.message);
+    next(error);
   }
 });
 

@@ -7,8 +7,12 @@ const router = express.Router();
 
 router.use('/', auth);
 
-router.get('/', guard.check('admin'), (req, res) => {
-  res.json({ message: 'accounts V1 is up and running...' });
+router.get('/', guard.check('admin'), (req, res, next) => {
+  try {
+    res.json({ message: 'accounts V1 is up and running...' });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
