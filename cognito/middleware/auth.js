@@ -15,6 +15,7 @@ const auth = async (req, res, next) => {
       const err = new Error();
       err.code = 'permission_denied';
       next(err);
+      // res.status(403).send(err);
     } else {
       const token = await cognitoExpress.validate(idtoken);
       const { username } = token;

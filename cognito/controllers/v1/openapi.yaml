@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: API Description
+  version: 1.0.0
+servers:
+  - url: /v1
+paths:
+  /accounts:
+    get:
+      summary: Returns a list of accounts
+      responses:
+        '200':
+          description: A JSON array of Accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /customers:
+    get:
+      summary: Returns a list of Customers
+      responses:
+        '200':
+          description: A JSON array of Customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /customers/{customername}:
+    get:
+      summary: Get a Customer by name
+      parameters:
+        - $ref: '#/components/parameters/customername'
+      responses:
+        '200':
+          description: A JSON object representing the customer
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  type: string
+components:
+  parameters:
+    customername:
+      in: path
+      name: customername
+      required: true
+      schema:
+        type: string
+      description: customer name of the Customer to get
+      example: customer1

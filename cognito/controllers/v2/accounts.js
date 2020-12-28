@@ -9,7 +9,7 @@ router.use('/', auth);
 // All endpoints are prepended with /accounts
 router.get('/', guard.check('admin'), (req, res, next) => {
   try {
-    res.json({ message: 'accounts V1 is up and running...' });
+    res.json({ message: 'accounts V2 is up and running...' });
   } catch (error) {
     next(error);
   }
