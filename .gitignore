@@ -75,3 +75,4 @@ src/res/images/.DS_Store
 .firebaserc
 cognito/.localenv
 cognito/.serverless/*
+.localenv
