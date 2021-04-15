@@ -1,0 +1,257 @@
+{
+	"info": {
+		"_postman_id": "53ddd800-c616-444a-b008-575d9f465d89",
+		"name": "versionedapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{baseurl}}/v2/auth/initiateauth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RESPOND TO AUTH CHALLENGE\", function(){",
+							"    var response = pm.response.json();",
+							"    var sessionToken = response.Session;",
+							"    pm.globals.set(\"exp_SESSION\", sessionToken);",
+							"    console.log(pm.globals.get('exp_SESSION'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "firstpassword",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "example@icloud.com",
+							"type": "string"
+						},
+						{
+							"key": "showPassword",
+							"value": false,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/v2/auth/initiateauth",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v2",
+						"auth",
+						"initiateauth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v2/auth/respondtoauthchallenge",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ChallengeName\": \"NEW_PASSWORD_REQUIRED\",\n    \"ChallengeResponses\": {\n        \"USERNAME\": \"example@icloud.com\",\n        \"NEW_PASSWORD\": \"secondpassword\"\n    },\n    \"Session\":  \"{{exp_SESSION}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseurl}}/v2/auth/respondtoauthchallenge",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v2",
+						"auth",
+						"respondtoauthchallenge"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v2/auth/initiateauth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RESPOND TO AUTH CHALLENGE\", function(){",
+							"    var response = pm.response.json();",
+							"    var authenticationResult = response.AuthenticationResult;",
+							"    var accessToken = authenticationResult.IdToken;",
+							"    pm.globals.set(\"exp_AUTHTOKEN\", accessToken);",
+							"    console.log(pm.globals.get('exp_AUTHTOKEN'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "example@icloud.com",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "secondpassword",
+							"type": "string"
+						},
+						{
+							"key": "showPassword",
+							"value": false,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/v2/auth/initiateauth",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v2",
+						"auth",
+						"initiateauth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v2/customers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "idtoken",
+						"value": "{{exp_AUTHTOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseurl}}/v2/customers",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v2",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v2/accounts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "idtoken",
+						"value": "{{exp_AUTHTOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseurl}}/v2/accounts",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v2",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v1/customers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "idtoken",
+						"value": "{{exp_AUTHTOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseurl}}/v1/customers",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v1",
+						"customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v1/customers/customer1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/v1/customers/customer1",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v1",
+						"customers",
+						"customer1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseurl}}/v1/accounts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}/v1/accounts",
+					"host": [
+						"{{baseurl}}"
+					],
+					"path": [
+						"v1",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
