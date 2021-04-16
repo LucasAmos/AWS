@@ -14,5 +14,6 @@ server.use('/v1', v1);
 server.use('/v2', v2);
 server.use(errorHandler);
 
-server.listen('9000');
+server.listen(9000);
+console.log('server started on port 9000');
 module.exports = server;

@@ -15,10 +15,9 @@ const auth = async (req, res, next) => {
       const err = new Error();
       err.code = 'permission_denied';
       next(err);
-      // res.status(403).send(err);
     } else {
       const token = await cognitoExpress.validate(idtoken);
-      const { username } = token;
+      const { email: username } = token;
       const permissions = token['cognito:groups'] ? token['cognito:groups'] : [];
 
       const user = { permissions, username };
