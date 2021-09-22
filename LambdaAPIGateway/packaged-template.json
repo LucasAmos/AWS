@@ -1,0 +1,55 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Transform": "AWS::Serverless-2016-10-31",
+    "Description": "AWS SAM product API",
+    "Resources": {
+        "ApiGatewayApi": {
+            "Type": "AWS::Serverless::Api",
+            "Properties": {
+                "StageName": "prod"
+            }
+        },
+        "GetMarketsFunction": {
+            "Type": "AWS::Serverless::Function",
+            "Properties": {
+                "Events": {
+                    "ApiEvent": {
+                        "Type": "Api",
+                        "Properties": {
+                            "Path": "/markets",
+                            "Method": "get",
+                            "RestApiId": {
+                                "Ref": "ApiGatewayApi"
+                            }
+                        }
+                    }
+                },
+                "Runtime": "nodejs14.x",
+                "Handler": "./build/index.fetchMarkets",
+                "Timeout": 30,
+                "CodeUri": "s3://lucas-function-deployments/453be9f636f85642c32408225fe4e48f"
+            }
+        },
+        "GetMarketFunction": {
+            "Type": "AWS::Serverless::Function",
+            "Properties": {
+                "Events": {
+                    "ApiEvent": {
+                        "Type": "Api",
+                        "Properties": {
+                            "Path": "/markets/{id}",
+                            "Method": "get",
+                            "RestApiId": {
+                                "Ref": "ApiGatewayApi"
+                            }
+                        }
+                    }
+                },
+                "Runtime": "nodejs14.x",
+                "Handler": "./build/index.fetchMarket",
+                "Timeout": 30,
+                "CodeUri": "s3://lucas-function-deployments/453be9f636f85642c32408225fe4e48f"
+            }
+        }
+    }
+}
