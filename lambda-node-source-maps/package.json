@@ -1,0 +1,18 @@
+{
+  "license": "ISC",
+  "name": "lambda-node-source-maps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx webpack",
+    "dev": "npx webpack && node ./build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "zip-webpack-plugin": "^4.0.1"
+  }
+}
