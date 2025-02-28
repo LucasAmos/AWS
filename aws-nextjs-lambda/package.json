@@ -1,0 +1,24 @@
+{
+  "name": "aws-nextjs-lambda",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build && sh ./prepare-build.sh",
+    "start": "next start",
+    "lint": "next lint",
+    "zip": "cd .next/standalone/ && zip -r app.zip .",
+    "cp": "aws s3 cp ./.next/static s3://aws-nextjs-s3/_next/static --recursive"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "15.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}
